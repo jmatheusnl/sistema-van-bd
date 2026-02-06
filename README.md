@@ -1,4 +1,4 @@
-#Banco de Dados - Sistema de Gestão de Transporte de Vans
+# Banco de Dados - Sistema de Gestão de Transporte de Vans
 
 <div align="center">
 
@@ -9,6 +9,7 @@
   
 </div>
 ---
+
 ## Sobre o projeto
 
 Este projeto consiste no desenvolvimento de um banco de dados para uma aplicação web que implementa um sistema de gerenciamento de viagens intermunicipais por meio de veículos fretados.
@@ -16,7 +17,7 @@ Este projeto consiste no desenvolvimento de um banco de dados para uma aplicaç�
 O objetivo é a implementação de um banco de dados funcional como requisito para aprovação na disciplina de Banco de Dados, ministrada pela professora **Priscilla Azevedo**, na Universidade Federal do Agreste de Pernambuco - UFAPE, durante o semestre de 2025.2.
 
 ## Equipe
-<div align="left">
+<div align="center">
   <a href="https://github.com/baracholeticia">
     <img src="https://img.shields.io/badge/Leticia%20Baracho-000?style=for-the-badge&logo=github&logoColor=white">
   </a>
