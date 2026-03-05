@@ -1,7 +1,6 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SettingsService, TravelResponseDTO, TravelPriceDTO } from '../../services/settings.service'; 
 
 @Component({
   selector: 'app-settings',
@@ -10,128 +9,137 @@ import { SettingsService, TravelResponseDTO, TravelPriceDTO } from '../../servic
   templateUrl: './settings.html'
 })
 export class SettingsComponent implements OnInit {
-  private settingsService = inject(SettingsService);
-
-  searchQuery = '';
   
-  // Variaveis para a criação de nova viagem (FALTAVAM AQUI)
-  newRouteId: string = '';
-  newVehicleId: string = '';
-  currentRate = 0.75;
-  newRateValue: number = 0;
+  // --- BARRA DE PESQUISA ---
+  searchQuery = '';
 
-  vehicles = signal<any[]>([]);
-  routes = signal<any[]>([]);
-  private _journeys = signal<TravelResponseDTO[]>([]);
+  // --- DADOS DA TABELA DE VIAGENS ---
+  trips = signal<any[]>([
+    {
+      id: 1,
+      driverName: 'Carlos Almeida',
+      dateTime: '2026-03-10T08:00',
+      pickupPoint: 'Praça Central',
+      dropoffPoint: 'Aeroporto Internacional',
+      status: 'Agendada',
+      pricePerKm: 2.50,
+      tripName: 'Rota Centro - Aeroporto',
+      reviews: [
+        { id: 101, clientName: 'João Silva', rating: 5, comment: 'Motorista excelente e pontual!' },
+        { id: 102, clientName: 'Maria Souza', rating: 4, comment: 'Viagem tranquila, recomendo.' }
+      ]
+    },
+    {
+      id: 2,
+      driverName: 'Mariana Santos',
+      dateTime: '2026-03-12T14:30',
+      pickupPoint: 'Rodoviária',
+      dropoffPoint: 'Shopping Sul',
+      status: 'Cancelada',
+      pricePerKm: 2.00,
+      tripName: 'Rota Rodoviária - Sul',
+      reviews: []
+    }
+  ]);
 
-  filteredJourneys = computed(() => {
-    const query = this.searchQuery.toLowerCase();
-    return this._journeys().filter(j => 
-      (j.routeName && j.routeName.toLowerCase().includes(query)) ||
-      (j.driverName && j.driverName.toLowerCase().includes(query)) ||
-      (j.vehiclePlate && j.vehiclePlate.toLowerCase().includes(query)) ||
-      (j.status && j.status.toLowerCase().includes(query))
-    );
-  });
+  // --- CONTROLES DOS MODAIS ---
+  showReviewsModal = false;
+  showEditTripModal = false;
+  showDeleteTripModal = false;
+  showAddTripModal = false;
+  
+  selectedTrip: any = null;
+  
+  newTrip: any = {
+    driverName: '',
+    dateTime: '',
+    pickupPoint: '',
+    dropoffPoint: '',
+    status: 'Agendada',
+    pricePerKm: 0
+  };
 
-  showEditModal = false;
+  // Variáveis mantidas apenas para evitar erro no bloco HTML antigo (que você não excluiu)
   showDeleteModal = false;
   selectedJourney: any = null;
 
   ngOnInit() {
-    this.loadData();
+    // Local onde você chamará sua API no futuro
   }
 
-  loadData() {
-    this.settingsService.getJourneys().subscribe({
-      // Caso o Spring Boot devolva páginação, use data.content em vez de data
-      next: (data: any) => {
-        const viagens = data.content ? data.content : data;
-        this._journeys.set(viagens);
-      },
-      error: (err) => console.error('Erro ao buscar viagens', err)
-    });
-
-    this.settingsService.getVehicles().subscribe({
-      next: (data) => this.vehicles.set(data),
-      error: (err) => console.error('Erro veículos', err)
-    });
-
-    this.settingsService.getRoutes().subscribe({
-      next: (data) => this.routes.set(data),
-      error: (err) => console.error('Erro rotas', err)
-    });
-  }
-
-  // FUNÇÃO ADICIONAR QUE ESTAVA A FALTAR
-  addJourney() {
-    if(!this.newRouteId || !this.newVehicleId) {
-      alert("Por favor, selecione uma rota e um veículo.");
-      return;
-    }
-
-    const payload = {
-      routeId: this.newRouteId,
-      vehicleId: this.newVehicleId,
-      status: "AGENDADA" // Status inicial padrão
+  // ==========================================
+  // FUNÇÕES DE ADICIONAR VIAGEM
+  // ==========================================
+  
+  openAddTripModal() {
+    this.newTrip = {
+      driverName: '',
+      dateTime: '',
+      pickupPoint: '',
+      dropoffPoint: '',
+      status: 'Agendada',
+      pricePerKm: 0
     };
-
-    this.settingsService.addJourney(payload).subscribe({
-      next: (res: TravelResponseDTO) => {
-        this._journeys.update(list => [...list, res]);
-        alert("Viagem adicionada com sucesso!");
-        this.newRouteId = '';
-        this.newVehicleId = '';
-      },
-      error: (err) => console.error('Erro ao adicionar viagem', err)
-    });
+    this.showAddTripModal = true;
   }
 
-  deleteJourney() {
-    this.settingsService.deleteJourney(this.selectedJourney.id).subscribe({
-      next: () => {
-        this._journeys.update(list => list.filter(j => j.id !== this.selectedJourney.id));
-        this.closeModals();
-      },
-      error: (err) => console.error('Erro ao excluir', err)
-    });
+  saveNewTrip() {
+    // Gera um ID temporário e salva na lista (Substituir pela API depois)
+    const tripToSave = {
+      id: Math.floor(Math.random() * 1000) + 100,
+      tripName: `Rota ${this.newTrip.pickupPoint} - ${this.newTrip.dropoffPoint}`,
+      reviews: [],
+      ...this.newTrip
+    };
+    
+    this.trips.update(list => [...list, tripToSave]);
+    this.closeTripModals();
   }
 
-  confirmSaveEdit() {
-    this.settingsService.updateJourney(this.selectedJourney.id, this.selectedJourney).subscribe({
-      next: (updatedJourney: TravelResponseDTO) => {
-        this._journeys.update(list => 
-          list.map(j => j.id === updatedJourney.id ? updatedJourney : j)
-        );
-        this.closeModals();
-      },
-      error: (err) => console.error('Erro ao editar', err)
-    });
+  // ==========================================
+  // FUNÇÕES DE VISUALIZAÇÃO, EDIÇÃO E EXCLUSÃO
+  // ==========================================
+
+  openReviewsModal(trip: any) {
+    this.selectedTrip = trip;
+    this.showReviewsModal = true;
   }
 
-  saveRate() {
-    if (this.newRateValue > 0) {
-      this.currentRate = this.newRateValue;
-      alert(`Nova tarifa de R$${this.currentRate.toFixed(2)} salva com sucesso!`);
-      this.newRateValue = 0;
-    } else {
-      alert('Insira um valor válido para a tarifa.');
-    }
+  openEditTripModal(trip: any) {
+    this.selectedTrip = { ...trip }; // Cria uma cópia para não alterar a tabela antes de salvar
+    this.showEditTripModal = true;
   }
 
-  openEditModal(journey: TravelResponseDTO) {
-    this.selectedJourney = { ...journey };
-    this.showEditModal = true;
+  saveTripEdit() {
+    this.trips.update(list => 
+      list.map(t => t.id === this.selectedTrip.id ? this.selectedTrip : t)
+    );
+    this.closeTripModals();
   }
 
-  openDeleteModal(journey: TravelResponseDTO) {
-    this.selectedJourney = journey;
-    this.showDeleteModal = true;
+  openDeleteTripModal(trip: any) {
+    this.selectedTrip = trip;
+    this.showDeleteTripModal = true;
   }
 
+  deleteTrip() {
+    this.trips.update(list => list.filter(t => t.id !== this.selectedTrip.id));
+    this.closeTripModals();
+  }
+
+  closeTripModals() {
+    this.showReviewsModal = false;
+    this.showEditTripModal = false;
+    this.showDeleteTripModal = false;
+    this.showAddTripModal = false;
+    this.selectedTrip = null;
+  }
+
+  // Funções mantidas apenas para não quebrar o HTML antigo do "Excluir trecho"
   closeModals() {
-    this.showEditModal = false;
     this.showDeleteModal = false;
-    this.selectedJourney = null;
+  }
+  deleteJourney() {
+    this.showDeleteModal = false;
   }
 }
