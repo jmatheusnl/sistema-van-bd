@@ -103,9 +103,19 @@
                   <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                       <span style="color: #112B3C; font-size: 16px; font-family: 'Google Sans Flex'; font-weight: 700">{{ review.clientName }}</span>
-                      <span style="color: #F66B0E; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 4px;">
-                        {{ review.rating }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                      </span>
+                      
+                      <div style="display: flex; align-items: center; gap: 16px;">
+                        <span style="color: #F66B0E; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                          {{ review.rating }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </span>
+                        
+                        <div (click)="deleteReview(review.id)" style="cursor: pointer; color: #D32F2F; display: flex; align-items: center;" title="Excluir Avaliação">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                          </svg>
+                        </div>
+                      </div>
+
                     </div>
                     <div style="color: #646464; font-size: 14px; font-family: 'Google Sans Flex';">
                       {{ review.comment }}

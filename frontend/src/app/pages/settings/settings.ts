@@ -105,6 +105,20 @@ export class SettingsComponent implements OnInit {
     this.showReviewsModal = true;
   }
 
+  deleteReview(reviewId: number) {
+    const confirmacao = confirm('Tem certeza que deseja excluir esta avaliação?');
+    
+    if (confirmacao) {
+      // 1. Remove da viagem que está aberta no modal
+      this.selectedTrip.reviews = this.selectedTrip.reviews.filter((r: any) => r.id !== reviewId);
+      
+      // 2. Atualiza a lista principal (signal) para guardar a alteração
+      this.trips.update(list => 
+        list.map(t => t.id === this.selectedTrip.id ? this.selectedTrip : t)
+      );
+    }
+  }
+
   openEditTripModal(trip: any) {
     this.selectedTrip = { ...trip }; // Cria uma cópia para não alterar a tabela antes de salvar
     this.showEditTripModal = true;
