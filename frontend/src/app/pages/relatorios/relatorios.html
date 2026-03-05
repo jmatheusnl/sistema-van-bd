@@ -1,5 +1,6 @@
 <div class="bg-gray-50 min-h-screen p-6 md:p-10 text-gray-900 font-sans">
-  <div class="max-w-[1200px] mx-auto space-y-10"> <div class="flex items-center justify-between gap-6 mb-4">
+  <div class="max-w-[1200px] mx-auto space-y-10">
+    <div class="flex items-center justify-between gap-6 mb-4">
       <h1 class="text-3xl font-extrabold text-gray-950">Visão Geral do Sistema</h1>
     </div>
 
@@ -10,21 +11,21 @@
           <table class="w-full text-left table-auto">
             <thead>
               <tr class="border-b border-gray-100">
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">ID</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Motorista</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Veículo / Placa</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Rota</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Partida</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Status</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">ID</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Motorista</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Veículo</th> <th class="px-5 py-4 text-sm font-semibold text-gray-950">Placa</th>   <th class="px-5 py-4 text-sm font-semibold text-gray-950">Rota</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Partida</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Status</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-sm">
               <tr *ngFor="let item of detalhesViagens" class="hover:bg-gray-50 transition">
-                <td class="px-5 py-4 text-gray-500 font-mono">{{ item.travel_id }}</td>
-                <td class="px-5 py-4 font-medium text-gray-950">{{ item.driver_name }}</td>
-                <td class="px-5 py-4 text-gray-600">{{ item.vehicle_model }} ({{ item.vehicle_plate }})</td>
-                <td class="px-5 py-4 text-gray-600">{{ item.route_name }}</td>
-                <td class="px-5 py-4 text-gray-600">{{ item.departure_time | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="px-5 py-4 text-gray-500 font-mono truncate max-w-[120px]" [title]="item.travelId">
+                  {{ item.travelId }}
+                </td>
+                <td class="px-5 py-4 font-medium text-gray-950">{{ item.driverName }}</td>
+                <td class="px-5 py-4 text-gray-600">{{ item.vehicleModel }}</td> <td class="px-5 py-4 text-gray-600 font-mono">{{ item.vehiclePlate }}</td> <td class="px-5 py-4 text-gray-600">{{ item.routeName }}</td>
+                <td class="px-5 py-4 text-gray-600">{{ item.departureTime | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="px-5 py-4">
                   <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                     {{ item.status }}
@@ -44,20 +45,22 @@
           <table class="w-full text-left table-auto">
             <thead>
               <tr class="border-b border-gray-100">
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">ID Viagem</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Rota</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Partida</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Passageiros</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950 text-right">Receita Total</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">ID Viagem</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Rota</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Partida</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Passageiros</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950 text-right">Receita Total</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-sm">
               <tr *ngFor="let item of relatoriosFinanceiros" class="hover:bg-gray-50 transition">
-                <td class="px-5 py-4 text-gray-500 font-mono">{{ item.travel_id }}</td>
-                <td class="px-5 py-4 font-medium text-gray-950">{{ item.route_name }}</td>
-                <td class="px-5 py-4 text-gray-600">{{ item.departure_time | date:'dd/MM/yyyy' }}</td>
-                <td class="px-5 py-4 text-gray-600">{{ item.total_passengers }}</td>
-                <td class="px-5 py-4 text-gray-950 font-medium text-right">{{ item.total_revenue | currency:'BRL':'symbol':'1.2-2' }}</td>
+                <td class="px-5 py-4 text-gray-500 font-mono truncate max-w-[120px]" [title]="item.travelId">
+                  {{ item.travelId }}
+                </td>
+                <td class="px-5 py-4 font-medium text-gray-950">{{ item.routeName }}</td>
+                <td class="px-5 py-4 text-gray-600">{{ item.departureTime | date:'dd/MM/yyyy' }}</td>
+                <td class="px-5 py-4 text-gray-600">{{ item.totalPassengers }}</td>
+                <td class="px-5 py-4 text-gray-950 font-medium text-right">{{ item.totalRevenue | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
             </tbody>
           </table>
@@ -72,22 +75,24 @@
           <table class="w-full text-left table-auto">
             <thead>
               <tr class="border-b border-gray-100">
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">ID Motorista</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Nome do Motorista</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Nota Média</th>
-                <th class="px-5 py-4.5 text-sm font-semibold text-gray-950">Total de Avaliações</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">ID Motorista</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Nome do Motorista</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Nota Média</th>
+                <th class="px-5 py-4 text-sm font-semibold text-gray-950">Total de Avaliações</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-sm">
               <tr *ngFor="let item of rankingMotoristas" class="hover:bg-gray-50 transition">
-                <td class="px-5 py-4 text-gray-500 font-mono">{{ item.driver_id }}</td>
-                <td class="px-5 py-4 font-medium text-gray-950">{{ item.driver_name }}</td>
+                <td class="px-5 py-4 text-gray-500 font-mono truncate max-w-[120px]" [title]="item.driverId">
+                  {{ item.driverId }}
+                </td>
+                <td class="px-5 py-4 font-medium text-gray-950">{{ item.driverName }}</td>
                 <td class="px-5 py-4">
                   <span class="inline-flex items-center rounded-md bg-yellow-50 px-2.5 py-1 text-sm font-bold text-yellow-700">
-                    ⭐ {{ item.average_rating | number:'1.1-2' }}
+                    ⭐ {{ item.averageRating | number:'1.1-2' }}
                   </span>
                 </td>
-                <td class="px-5 py-4 text-gray-600">{{ item.total_feedbacks }} avaliações</td>
+                <td class="px-5 py-4 text-gray-600">{{ item.totalFeedbacks }} avaliações</td>
               </tr>
             </tbody>
           </table>

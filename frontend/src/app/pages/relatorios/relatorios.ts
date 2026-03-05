@@ -3,28 +3,28 @@ import { CommonModule } from '@angular/common';
 import { RelatoriosService } from '../../services/relatorios.service'; // Importamos o service
 
 export interface DetalhesViagem {
-  travel_id: string;
-  driver_name: string;
-  vehicle_model: string;
-  vehicle_plate: string;
-  route_name: string;
-  departure_time: Date;
+  travelId: string;
+  driverName: string;
+  vehicleModel: string;
+  vehiclePlate: string;
+  routeName: string;
+  departureTime: Date;
   status: string;
 }
 
 export interface RelatorioFinanceiro {
-  travel_id: string;
-  route_name: string;
-  departure_time: Date;
-  total_passengers: number;
-  total_revenue: number;
+  travelId: string;
+  routeName: string;
+  departureTime: Date;
+  totalPassengers: number;
+  totalRevenue: number;
 }
 
 export interface RankingMotorista {
-  driver_id: string;
-  driver_name: string;
-  average_rating: number;
-  total_feedbacks: number;
+  driverId: string;
+  driverName: string;
+  averageRating: number;
+  totalFeedbacks: number;
 }
 
 @Component({
