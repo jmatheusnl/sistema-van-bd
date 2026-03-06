@@ -50,9 +50,9 @@ export class SettingsComponent implements OnInit {
     if (!query) return this.allTrips();
 
     return this.allTrips().filter(trip => 
-      trip.driverName.toLowerCase().includes(query) ||
-      trip.routeName.toLowerCase().includes(query) ||
-      trip.vehiclePlate.toLowerCase().includes(query)
+      (trip.driverName?.toLowerCase() || '').includes(query) ||
+      (trip.routeName?.toLowerCase() || '').includes(query) ||
+      (trip.vehiclePlate?.toLowerCase() || '').includes(query)
     );
   });
 
@@ -92,7 +92,7 @@ export class SettingsComponent implements OnInit {
   // ==========================================
   carregarVeiculos() {
     this.http.get<any[]>('http://localhost:8080/api/vehicles').subscribe({
-      next: (dados) => this.veiculosDisponiveis.set(dados),
+      next: (dados) => this.veiculosDisponiveis.set(dados || []),
       error: (err) => console.error('Erro ao buscar veículos', err)
     });
   }
@@ -103,12 +103,14 @@ export class SettingsComponent implements OnInit {
   carregarRotas() {
     this.rotasService.getRoutes().subscribe({
       next: (dados) => {
+        if (!dados) return;
         const rotasFormatadas = dados.map(r => ({
           id: r.id,
           name: r.name,
-          stops: r.stops.sort((a: any, b: any) => a.stopOrder - b.stopOrder).map((s: any) => ({
+          // Adicionado optional chaining (?.) para evitar quebra se r.stops for indefinido
+          stops: r.stops?.sort((a: any, b: any) => a.stopOrder - b.stopOrder).map((s: any) => ({
             id: s.id, name: s.city, location: s.stopLocation, order: s.stopOrder 
-          })),
+          })) || [],
           segments: [] 
         }));
         this.allRoutes.set(rotasFormatadas);
@@ -205,6 +207,7 @@ export class SettingsComponent implements OnInit {
   carregarReservas() {
     this.reservasService.getReservations().subscribe({
       next: (dados) => {
+        if (!dados) return;
         const reservasFormatadas = dados.map(r => ({
           id: r.id,
           clientName: r.passengerName,
@@ -233,8 +236,10 @@ export class SettingsComponent implements OnInit {
   carregarViagens() {
     this.viagensService.getViagens().subscribe({
       next: (dados) => {
+        if (!dados) return;
         const viagensFormatadas = dados.map((viagem: any) => {
-          const [dataStr, horaStr] = viagem.departureTime.split(' ');
+          const departureTime = viagem.departureTime || '01/01/2000 00:00';
+          const [dataStr, horaStr] = departureTime.split(' ');
           const [dia, mes, ano] = dataStr.split('/');
           const isoDateString = `${ano}-${mes}-${dia}T${horaStr}:00`;
 
@@ -244,21 +249,22 @@ export class SettingsComponent implements OnInit {
           else if (viagem.status === 'CANCELED' || viagem.status === 'CANCELLED') statusTraduzido = 'Cancelada';
 
           const priceObj = viagem.prices && viagem.prices.length > 0 ? viagem.prices[0] : null;
+          const routeName = viagem.routeName || '';
 
           return {
             id: viagem.id,
             driverName: viagem.driverName || 'Sem motorista',
             dateTime: isoDateString,
-            pickupPoint: viagem.routeName.split('-')[0]?.trim() || 'Ponto Inicial',
-            dropoffPoint: viagem.routeName.split('-')[1]?.trim() || 'Ponto Final',
+            pickupPoint: routeName.split('-')[0]?.trim() || 'Ponto Inicial',
+            dropoffPoint: routeName.split('-')[1]?.trim() || 'Ponto Final',
             status: statusTraduzido,
             originalStatus: viagem.status, 
-            routeName: viagem.routeName,
+            routeName: routeName,
             vehiclePlate: viagem.vehiclePlate,
             price: priceObj ? priceObj.price : 0,
             boardingStopId: priceObj ? priceObj.boardingStopId : '',
             dropOffStopId: priceObj ? priceObj.dropOffStopId : '',
-            tripName: viagem.routeName,
+            tripName: routeName,
             reviews: [] 
           };
         });

@@ -5,7 +5,6 @@ import { MainLayout } from './layout/main-layout';
 import { AdminLayout } from './layout/admin-layout';
 import { ClientLayout } from './layout/client-layout';
 
-
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./pages/login/login').then(m => m.Login) },
   { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) },
@@ -22,8 +21,8 @@ export const routes: Routes = [
       { path: 'motoristas', loadComponent: () => import('./pages/motoristas/motoristas.component').then(m => m.MotoristasComponent)},
       { path: 'clientes', loadComponent: () => import('./pages/clients/clients').then(m => m.ClientsComponent)},
       { path: 'aprovar-motoristas', loadComponent: () => import('./pages/approve-drivers/approve-drivers').then(m => m.ApproveDrivers)},
-      { path: 'viagens', loadComponent: () => import('./pages/settings/settings').then(m => m.SettingsComponent)},
-      { path: 'parametros', loadComponent: () => import('./pages/settings/settings').then(m => m.SettingsComponent)} //MUDAR PRA ROTASS
+      // Rota alterada para 'settings' para não conflitar com a rota do cliente
+      { path: 'settings', loadComponent: () => import('./pages/settings/settings').then(m => m.SettingsComponent)}
     ] 
   },
   {
