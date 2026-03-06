@@ -14,8 +14,12 @@ import { ReservasService } from '../../services/reservas.service';
 })
 export class SettingsComponent implements OnInit {
   
+  // --- BARRA DE PESQUISA GERAL ---
   searchQuery = signal('');
-  
+
+  // ==========================================
+  // DADOS E CONTROLES DE ROTAS
+  // ==========================================
   allRoutes = signal<any[]>([]);
   showAddRouteModal = false;
   showEditRouteModal = false;
@@ -29,11 +33,18 @@ export class SettingsComponent implements OnInit {
     segments: [] 
   };
 
+  // ==========================================
+  // DADOS E CONTROLES DE RESERVAS
+  // ==========================================
   reservations = signal<any[]>([]);
 
+  // ==========================================
+  // DADOS E CONTROLES DE VIAGENS
+  // ==========================================
   allTrips = signal<any[]>([]);
   veiculosDisponiveis = signal<any[]>([]); 
 
+  // Filtro de viagens baseado na barra de pesquisa
   trips = computed(() => {
     const query = this.searchQuery().toLowerCase();
     if (!query) return this.allTrips();
@@ -71,10 +82,14 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.carregarRotas();
     this.carregarVeiculos();
+    // Atraso leve para garantir que rotas e veículos carreguem antes das viagens
     setTimeout(() => this.carregarViagens(), 300);
     this.carregarReservas();
   }
 
+  // ==========================================
+  // BUSCA DE VEÍCULOS (Para o Select de Viagens)
+  // ==========================================
   carregarVeiculos() {
     this.http.get<any[]>('http://localhost:8080/api/vehicles').subscribe({
       next: (dados) => this.veiculosDisponiveis.set(dados),
@@ -82,6 +97,9 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  // ==========================================
+  // LÓGICA DE INTEGRAÇÃO - ROTAS
+  // ==========================================
   carregarRotas() {
     this.rotasService.getRoutes().subscribe({
       next: (dados) => {
@@ -106,8 +124,6 @@ export class SettingsComponent implements OnInit {
 
   addStop() { this.newRoute.stops.push({ name: '' }); }
   removeStop(index: number) { this.newRoute.stops.splice(index, 1); }
-  addSegment() {} 
-  removeSegment(index: number) {} 
 
   saveNewRoute() {
     const payload = {
@@ -135,8 +151,6 @@ export class SettingsComponent implements OnInit {
 
   addStopEdit() { this.selectedRoute.stops.push({ name: '' }); }
   removeStopEdit(index: number) { this.selectedRoute.stops.splice(index, 1); }
-  addSegmentEdit() {} 
-  removeSegmentEdit(index: number) {} 
 
   saveRouteEdit() {
     const payload = {
@@ -185,6 +199,9 @@ export class SettingsComponent implements OnInit {
     this.selectedRoute = null;
   }
 
+  // ==========================================
+  // LÓGICA DE INTEGRAÇÃO - RESERVAS
+  // ==========================================
   carregarReservas() {
     this.reservasService.getReservations().subscribe({
       next: (dados) => {
@@ -210,6 +227,9 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  // ==========================================
+  // LÓGICA DE INTEGRAÇÃO - VIAGENS
+  // ==========================================
   carregarViagens() {
     this.viagensService.getViagens().subscribe({
       next: (dados) => {
@@ -346,10 +366,6 @@ export class SettingsComponent implements OnInit {
   openReviewsModal(trip: any) {
     this.selectedTrip = trip;
     this.showReviewsModal = true;
-  }
-
-  deleteReview(reviewId: number) {
-
   }
 
   closeTripModals() {
